@@ -127,6 +127,23 @@ EFI_STATUS OpenGOP(EFI_HANDLE image_handle,
   return EFI_SUCCESS;
 }
 
+const CHAR16* GetPixelFormatUnicode(EFI_GRAPHICS_PIXEL_FORMAT fmt) {
+  switch (fmt) {
+    case PixelRedGreenBlueReserved8BitPerColor:
+      return L"PixelRedGreenBlueReserved8BitPerColor";
+    case PixelBlueGreenRedReserved8BitPerColor:
+      return L"PixelBlueGreenRedReserved8BitPerColor";
+    case PixelBitMask:
+      return L"PixelBitMask";
+    case PixelBltOnly:
+      return L"PixelBltOnly";
+    case PixelFormatMax:
+      return L"PixelFormatMax";
+    default:
+      return L"InvalidPixelFormat";
+  }
+}
+
 EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
                            EFI_SYSTEM_TABLE* system_table) {
   Print(L"Hello, Mikan World!\n");
@@ -148,16 +165,16 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image_handle,
 
   // gop
   EFI_GRAPHICS_OUTPUT_PROTOCOL* gop;
-  OpenGop(image_handle, &gop);
+  OpenGOP(image_handle, &gop);
 
   Print(L"Resolution: %ux%u, Pixel Format: %s, %u pixels/line\n",
         gop->Mode->Info->HorizontalResolution,
         gop->Mode->Info->VerticalResolution,
         GetPixelFormatUnicode(gop->Mode->Info->PixelFormat),
-        gop->Mode->Info->PixelPerScanLine);
+        gop->Mode->Info->PixelsPerScanLine);
   Print(L"Frame Bufffer: 0x%0lx - 0x%0lx, Size: %lu bytes\n",
         gop->Mode->FrameBufferBase,
-        gop->Mode->FrameBufferaBase + gop->Mode->FrameBufferSize,
+        gop->Mode->FrameBufferBase + gop->Mode->FrameBufferSize,
         gop->Mode->FrameBufferSize);
 
   UINT8* frame_buffer = (UINT8*)gop->Mode->FrameBufferBase;
